@@ -4,7 +4,7 @@ This document contains [LWS](https://github.com/lwshq)'s technical exam.  This i
 application that provides a simple organizer for the user to store notes
 and TODOs. You have 48 hours to send your PR and Answer the questions, complete or not.
 
-* Instructions
+## Instructions
 
   1. Fork this repository on your own personal GitHub account.
   2. Download your fork, build this app, and begin making changes.
@@ -15,9 +15,13 @@ and TODOs. You have 48 hours to send your PR and Answer the questions, complete 
   You may also submit your commits using =git format-patch=, should you
   prefer it over GitHub PRs.
 
-* Specifications
+## Specifications
+
+
 `If you are applying for Backend, Disregard typescript and use pure Laravel.`
+
 `If you are applying for a Frontend, Disregard the API Task and proceed with frontend only.`
+
 `If you are applying for Full-Stack, You need to work on both API and Frontend in TypeScript.`
 
 
@@ -43,7 +47,7 @@ and TODOs. You have 48 hours to send your PR and Answer the questions, complete 
   9. Include Unit/Functional Tests and make sure both has 70% and up test coverage
   10. Wrap everything and make sure we can run both frontend and backend easily.
 
-* Questions
+## Questions
 
   In your PR/patch email, please also answer these following questions:
 
@@ -64,11 +68,11 @@ and TODOs. You have 48 hours to send your PR and Answer the questions, complete 
   In addition, you may provide more information in your PR/patch email
   that you would like us to know.
 
-* Bonus Questions
+## Bonus Questions
   - Explain Hoisting to a 5 year old kid.
   - Explain Memoization to a 5 year old kid.
 
-* Notes
+## Notes
 
   - You may use any open source libraries that you think would be useful
     for completing the test and improving this app.
