@@ -1,3 +1,5 @@
+require("dotenv").config();
+
 import express from "express";
 import http from "http";
 import bodyParser from "body-parser";
@@ -21,8 +23,7 @@ server.listen(8080, () => {
   console.log("Server is running on http://localhost:8080");
 });
 
-const MONGO_URL =
-  "mongodb+srv://markharji:9HGbHRZD7i6MSdz6@cluster0.ml10k2m.mongodb.net/";
+const MONGO_URL = `mongodb+srv://markharji:${process.env.MONGODB_PASSWORD}@cluster0.ml10k2m.mongodb.net/`;
 
 mongoose.Promise = Promise;
 mongoose.connect(MONGO_URL);

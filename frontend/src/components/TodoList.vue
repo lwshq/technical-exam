@@ -1,10 +1,22 @@
 <template>
   <v-card class="todo-section">
-    <h3 class="text-center mb-4">Todo List</h3>
+    <v-overlay
+      v-model="loading"
+      contained
+      class="align-center justify-center"
+      :persistent="true"
+      ><v-progress-circular
+        color="primary"
+        indeterminate
+        size="64"
+      ></v-progress-circular
+    ></v-overlay>
+
+    <h3 class="text-center mb-4 section-title">Todo List</h3>
 
     <v-divider :thickness="2"></v-divider>
 
-    <div class="mt-4 mb-4 d-flex flex-column">
+    <div class="mt-4 mb-3 d-flex flex-column">
       <v-text-field
         v-model="todoEntry"
         label="Todo Entry"
@@ -18,32 +30,37 @@
       ></v-btn>
     </div>
 
-    <div class="mb-4">
-      <template v-for="(entry, i) in todoList" :key="i">
-        <v-sheet
-          class="entries-class d-flex justify-space-between"
-          :elevation="3"
-          rounded
+    <v-divider :thickness="2"></v-divider>
+
+    <div class="mb-4 todo-list-container">
+      <v-sheet
+        v-for="(entry, i) in todoList"
+        :key="i"
+        class="entries-class d-flex justify-space-between"
+        :elevation="3"
+        rounded
+      >
+        <div @click="updateTodo(entry)" class="ch-container">
+          <v-checkbox :model-value="entry.done" class="checkboxes-class">
+            <template v-slot:label>
+              <p
+                class="label-style d-inline-block text-truncate"
+                :class="checkIfDone(entry.done)"
+              >
+                {{ entry.title }}
+              </p>
+            </template>
+          </v-checkbox>
+        </div>
+        <v-btn
+          density="compact"
+          icon="mdi-plus"
+          color="red"
+          class="mr-2"
+          @click="removeTodo(entry)"
+          ><v-icon>mdi-trash-can</v-icon></v-btn
         >
-          <div @click="updateTodo(entry)" class="ch-container">
-            <v-checkbox :model-value="entry.done" class="checkboxes-class">
-              <template v-slot:label>
-                <p class="label-style" :class="checkIfDone(entry.done)">
-                  {{ entry.title }}
-                </p>
-              </template>
-            </v-checkbox>
-          </div>
-          <v-btn
-            density="compact"
-            icon="mdi-plus"
-            color="red"
-            class="mr-2"
-            @click="removeTodo(entry)"
-            >X</v-btn
-          >
-        </v-sheet>
-      </template>
+      </v-sheet>
     </div>
 
     <v-divider :thickness="2"></v-divider>
@@ -70,6 +87,7 @@ export default defineComponent({
 
   data() {
     return {
+      loading: true,
       todoEntry: "",
       todoList: [] as TodoEntryType[],
     };
@@ -78,6 +96,8 @@ export default defineComponent({
   methods: {
     addEntry() {
       if (!this.todoEntry.trim()) return;
+
+      this.loading = true;
 
       const entry: TodoEntryType = {
         title: this.todoEntry,
@@ -100,6 +120,7 @@ export default defineComponent({
     },
 
     updateTodo(entry: TodoEntryType) {
+      this.loading = true;
       axios
         .put(`${api}/todos/${entry._id}`, { ...entry, done: !entry.done })
         .then(() => {
@@ -109,6 +130,7 @@ export default defineComponent({
     },
 
     removeTodo(val: TodoEntryType) {
+      this.loading = true;
       axios
         .delete(`${api}/todos/${val._id}`)
         .then(() => {
@@ -118,6 +140,7 @@ export default defineComponent({
     },
 
     removeDone() {
+      this.loading = true;
       axios
         .delete(`${api}/todosDelete`)
         .then(() => {
@@ -131,6 +154,7 @@ export default defineComponent({
         .then((response: any) => {
           // handle success
           this.todoList = response.data;
+          this.loading = false;
         })
         .catch((error: Error) => console.log(error));
     },
@@ -144,9 +168,11 @@ export default defineComponent({
 <style>
 .todo-section {
   padding: 10px;
-  height: 85vh;
+  height: 90vh;
+  max-width: 500px;
+  min-width: 400px;
+  margin: auto;
   max-height: 85vh;
-  overflow: auto;
 }
 .text-field-class {
   margin-bottom: 0;
@@ -181,5 +207,17 @@ export default defineComponent({
 
 .v-label--clickable {
   pointer-events: none;
+}
+
+.todo-list-container {
+  height: 50vh;
+  max-height: 50vh;
+  overflow-y: auto;
+  margin: 20px 0 20px 0;
+}
+
+.section-title {
+  background-color: #e3f2fd;
+  padding: 10px 0 10px 0;
 }
 </style>

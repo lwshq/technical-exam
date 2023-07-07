@@ -9,8 +9,8 @@
       <div>
         <v-container fluid>
           <v-row dense>
-            <v-col cols="3"><todo-list></todo-list></v-col>
-            <v-col cols="9"><notes></notes></v-col>
+            <v-col lg="3" md="4" sm="12"><todo-list></todo-list></v-col>
+            <v-col lg="9" md="8" sm="12"><notes></notes></v-col>
           </v-row>
         </v-container>
       </div>
