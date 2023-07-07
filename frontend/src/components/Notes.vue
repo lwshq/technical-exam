@@ -42,7 +42,7 @@
           <v-card-item>
             <div class="d-flex justify-space-between">
               <v-card-title>{{ note.title }}</v-card-title>
-              <v-btn density="compact" icon="mdi-plus" @click="deleteNote(i)"
+              <v-btn density="compact" icon="mdi-plus" @click="deleteNote(note)"
                 >x</v-btn
               >
             </div>
@@ -65,11 +65,10 @@
 
 <script lang="ts">
 import { defineComponent } from "vue";
+import { NotesDto } from "../interface/interfaces";
+import axios from "axios";
 
-interface NotesDto {
-  title: string;
-  description: string;
-}
+const api = "http://localhost:8080"; // For localhost server
 
 export default defineComponent({
   name: "Notes",
@@ -80,12 +79,7 @@ export default defineComponent({
     return {
       dialog: false,
       note: {} as NotesDto,
-      noteList: [
-        {
-          title: "Technical Exam",
-          description: "I will take an assestment tomorrow",
-        },
-      ] as NotesDto[],
+      noteList: [] as NotesDto[],
       titleRules: [
         (value: string) => {
           if (value?.length > 0) return true;
@@ -99,13 +93,37 @@ export default defineComponent({
   methods: {
     addNote() {
       if (!this.note.title) return;
-      this.noteList.unshift(this.note);
-      this.note = {} as NotesDto;
-      this.dialog = false;
+
+      axios
+        .post(`${api}/notes`, this.note)
+        .then(() => {
+          // handle success
+          this.fetchNotes();
+          this.note = {} as NotesDto;
+          this.dialog = false;
+        })
+        .catch((error: Error) => console.log(error));
     },
-    deleteNote(i: number) {
-      this.noteList.splice(i, 1);
+    deleteNote(val: NotesDto) {
+      axios
+        .delete(`${api}/notes/${val._id}`)
+        .then(() => {
+          this.fetchNotes();
+        })
+        .catch((error: Error) => console.log(error));
     },
+    fetchNotes() {
+      axios
+        .get(`${api}/notes`)
+        .then((response: any) => {
+          // handle success
+          this.noteList = response.data;
+        })
+        .catch((error: Error) => console.log(error));
+    },
+  },
+  created() {
+    this.fetchNotes();
   },
 });
 </script>

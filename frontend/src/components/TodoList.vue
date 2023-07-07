@@ -25,7 +25,7 @@
           :elevation="3"
           rounded
         >
-          <div @click="updateTodo(entry.done, i)" class="ch-container">
+          <div @click="updateTodo(entry)" class="ch-container">
             <v-checkbox :model-value="entry.done" class="checkboxes-class">
               <template v-slot:label>
                 <p class="label-style" :class="checkIfDone(entry.done)">
@@ -39,7 +39,7 @@
             icon="mdi-plus"
             color="red"
             class="mr-2"
-            @click="removeTodo(i)"
+            @click="removeTodo(entry)"
             >X</v-btn
           >
         </v-sheet>
@@ -58,11 +58,10 @@
 
 <script lang="ts">
 import { defineComponent } from "vue";
+import { TodoEntryType } from "../interface/interfaces";
+import axios from "axios";
 
-interface TodoEntryType {
-  title: string;
-  done: boolean;
-}
+const api = "http://localhost:8080"; // For localhost server
 
 export default defineComponent({
   name: "TodoList",
@@ -86,25 +85,58 @@ export default defineComponent({
       };
 
       this.todoList.push(entry);
-      this.todoEntry = "";
+      axios
+        .post(`${api}/todos`, entry)
+        .then(() => {
+          // handle success
+          this.fetchTodos();
+          this.todoEntry = "";
+        })
+        .catch((error: Error) => console.log(error));
     },
 
     checkIfDone(done: boolean) {
       return done ? "done" : "";
     },
 
-    updateTodo(entryDone: boolean, i: number) {
-      console.log(entryDone);
-      this.todoList[i].done = !entryDone;
+    updateTodo(entry: TodoEntryType) {
+      axios
+        .put(`${api}/todos/${entry._id}`, { ...entry, done: !entry.done })
+        .then(() => {
+          this.fetchTodos();
+        })
+        .catch((error: Error) => console.log(error));
     },
 
-    removeTodo(i: number) {
-      this.todoList.splice(i, 1);
+    removeTodo(val: TodoEntryType) {
+      axios
+        .delete(`${api}/todos/${val._id}`)
+        .then(() => {
+          this.fetchTodos();
+        })
+        .catch((error: Error) => console.log(error));
     },
 
     removeDone() {
-      this.todoList = this.todoList.filter(({ done }) => !done);
+      axios
+        .delete(`${api}/todosDelete`)
+        .then(() => {
+          this.fetchTodos();
+        })
+        .catch((error: Error) => console.log(error));
     },
+    fetchTodos() {
+      axios
+        .get(`${api}/todos`)
+        .then((response: any) => {
+          // handle success
+          this.todoList = response.data;
+        })
+        .catch((error: Error) => console.log(error));
+    },
+  },
+  created() {
+    this.fetchTodos();
   },
 });
 </script>

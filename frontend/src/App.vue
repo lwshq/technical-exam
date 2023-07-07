@@ -25,9 +25,7 @@ import TodoList from "./components/TodoList.vue";
 
 export default defineComponent({
   name: "App",
-
   components: { Notes, TodoList },
-
   data() {
     return {
       //
